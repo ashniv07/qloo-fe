@@ -1,240 +1,282 @@
-import React, { useState, useEffect, useRef } from "react";
-import MyAccount from "./MyAccount";
-import axios from "axios";
-import SendIcon from "../images/SendIcon";
-import Logo from "../images/My-Nakama-Logo.png"; // Your logo image
-import ListenerImg from "../images/ChatListener.png"; // Listener image
-import { useSelector } from "react-redux";
-import { Link } from "react-router-dom";
+"use client"
 
-const ChatInterface = () => {
-  const userId = useSelector((state) => state.user.userId);
-  const [message, setMessage] = useState("");
-  const [chatMessages, setChatMessages] = useState([]);
-  const [loading, setLoading] = useState(false); // State to manage loading state
-  const chatContainerRef = useRef(null);
-  const inputRef = useRef(null);
+import { useState, useEffect, useRef } from "react"
+import { MessageCircle, BookOpen, PenTool, User, LogOut, Send } from "lucide-react"
+import { Link } from "react-router-dom"
 
-  const generateRandomShapes = (numShapes) => {
-    const shapes = [];
-    for (let i = 0; i < numShapes; i++) {
-      const width = Math.random() * 100 + 50; // Random width between 50px and 150px
-      const height = Math.random() * 100 + 50; // Random height between 50px and 150px
-      const top = Math.random() * 100; // Random top position between 0% and 100%
-      const left = Math.random() * 100; // Random left position between 0% and 100%
-      const background = `linear-gradient(${Math.random() * 360}deg, hsl(${Math.random() * 360}, 70%, 80%), hsl(${Math.random() * 360}, 70%, 80%))`;
+// Mock image
+const ListenerImg =
+  "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTI4IiBoZWlnaHQ9IjEyOCIgdmlld0JveD0iMCAwIDEyOCAxMjgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxjaXJjbGUgY3g9IjY0IiBjeT0iNjQiIHI9IjY0IiBmaWxsPSIjZjNmNGY2Ii8+CjxjaXJjbGUgY3g9IjY0IiBjeT0iNTAiIHI9IjIwIiBmaWxsPSIjOGI1Y2Y2Ii8+CjxjaXJjbGUgY3g9IjY0IiBjeT0iOTAiIHI9IjMwIiBmaWxsPSIjNjM2NmYxIi8+Cjwvc3ZnPg=="
 
-      shapes.push({ width, height, top, left, background });
+// Sidebar Component with updated Link paths
+function AppSidebar() {
+  const [isHovered, setIsHovered] = useState(false)
+
+  const menuItems = [
+    { title: "Blogs", icon: BookOpen, href: "/blogs" }, // updated
+    { title: "Journal", icon: PenTool, href: "/journal" },
+    { title: "Therapy Chat", icon: MessageCircle, href: "/chat" },
+  ]
+
+  const bottomItems = [
+    { title: "Profile", icon: User, href: "/profile" },
+    { title: "Logout", icon: LogOut, href: "/logout" },
+  ]
+
+  return (
+    <aside
+      className={`fixed left-3 top-3 bottom-3 bg-gradient-to-b from-purple-50 to-white shadow-xl transition-all duration-300 ease-in-out z-50 ${
+        isHovered ? "w-48" : "w-12"
+      } rounded-xl border border-purple-100/50 backdrop-blur-sm flex flex-col`}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
+      <div className="p-2 border-b border-purple-100/50 flex-shrink-0">
+        <div className="flex items-center gap-2">
+          <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center shadow-md transition-transform duration-300 hover:scale-110 flex-shrink-0">
+            <div className="w-3 h-3 bg-white rounded-sm transform rotate-45" />
+          </div>
+          <div
+            className={`transition-all duration-300 overflow-hidden ${
+              isHovered ? "opacity-100 w-auto" : "opacity-0 w-0"
+            }`}
+          >
+            <h1 className="text-sm font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent whitespace-nowrap">
+              My Nakama
+            </h1>
+          </div>
+        </div>
+      </div>
+
+      <div className="flex-1 py-2 overflow-hidden">
+        {isHovered && (
+          <nav className="space-y-1 px-1 h-full">
+            {menuItems.map((item, index) => (
+              <Link
+                key={item.title}
+                to={item.href}
+                className="group flex items-center gap-2 p-2 rounded-lg transition-all duration-300 hover:bg-gradient-to-r hover:from-purple-100 hover:to-blue-100 hover:shadow-md hover:scale-105"
+                style={{
+                  transitionDelay: `${index * 50}ms`,
+                  animation: `slideInLeft 0.3s ease-out ${index * 50}ms both`,
+                }}
+              >
+                <item.icon className="h-4 w-4 text-purple-600 group-hover:text-purple-700 flex-shrink-0" />
+                <span className="font-medium text-sm text-slate-700 group-hover:text-slate-800 whitespace-nowrap">
+                  {item.title}
+                </span>
+              </Link>
+            ))}
+          </nav>
+        )}
+      </div>
+
+      <div className="border-t border-purple-100/50 p-1 flex-shrink-0">
+        {isHovered && (
+          <nav className="space-y-1">
+            {bottomItems.map((item, index) => (
+              <Link
+                key={item.title}
+                to={item.href}
+                className="group flex items-center gap-2 p-2 rounded-lg transition-all duration-300 hover:bg-gradient-to-r hover:from-purple-100 hover:to-blue-100 hover:shadow-md hover:scale-105"
+                style={{
+                  transitionDelay: `${(index + 3) * 50}ms`,
+                  animation: `slideInLeft 0.3s ease-out ${(index + 3) * 50}ms both`,
+                }}
+              >
+                <item.icon className="h-4 w-4 text-purple-600 group-hover:text-purple-700 flex-shrink-0" />
+                <span className="font-medium text-sm text-slate-700 group-hover:text-slate-800 whitespace-nowrap">
+                  {item.title}
+                </span>
+              </Link>
+            ))}
+          </nav>
+        )}
+      </div>
+    </aside>
+  )
+}
+
+// ChatInterface Component (same as before, unchanged paths)
+function ChatInterface() {
+  const [message, setMessage] = useState("")
+  const [chatMessages, setChatMessages] = useState([])
+  const [loading, setLoading] = useState(false)
+  const [showContent, setShowContent] = useState(false)
+  const chatContainerRef = useRef(null)
+  const inputRef = useRef(null)
+  const sparkleBurstRef = useRef(null)
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      createSparkleBurst()
+      setShowContent(true)
+    }, 300)
+    return () => clearTimeout(timer)
+  }, [])
+
+  const createSparkleBurst = () => {
+    if (!sparkleBurstRef.current) return
+    const container = sparkleBurstRef.current
+    const centerX = window.innerWidth / 2
+    const centerY = window.innerHeight / 2
+    for (let i = 0; i < 15; i++) {
+      const sparkle = document.createElement("div")
+      sparkle.className = "sparkle"
+      const angle = (i / 15) * 2 * Math.PI
+      const distance = 60 + Math.random() * 40
+      const dx = Math.cos(angle) * distance
+      const dy = Math.sin(angle) * distance
+      sparkle.style.left = centerX + "px"
+      sparkle.style.top = centerY + "px"
+      sparkle.style.setProperty("--dx", dx + "px")
+      sparkle.style.setProperty("--dy", dy + "px")
+      sparkle.style.animationDelay = Math.random() * 0.5 + "s"
+      container.appendChild(sparkle)
     }
-    return shapes;
-  };
-
-  const shapes = generateRandomShapes(10);
-
-//   const generateRandomCircles = (numCircles) => {
-//   const circles = [];
-//   for (let i = 0; i < numCircles; i++) {
-//     const size = Math.random() * 100 + 50; // Random size between 50px and 150px
-//     const top = Math.random() * 100; // Random top position between 0% and 100%
-//     const left = Math.random() * 100; // Random left position between 0% and 100%
-//     // const color = `hsl(${Math.random() * 360}, 70%, 80%)`; // Random color
-
-//     circles.push({ size, top, left });
-//   }
-//   return circles;
-// };
-
-// const circles = generateRandomCircles(20);
+    setTimeout(() => {
+      if (container) container.innerHTML = ""
+    }, 2500)
+  }
 
   const sendMessage = async () => {
-    if (!message.trim()) return;
-
-    console.log("User ID", userId);
-
-    const userMessage = { text: message, isUser: true };
-    setChatMessages((prevMessages) => [...prevMessages, userMessage]);
-
-    setLoading(true); // Set loading state while waiting for response
+    if (!message.trim()) return
+    const userMessage = { text: message, isUser: true }
+    setChatMessages((prevMessages) => [...prevMessages, userMessage])
+    setLoading(true)
 
     try {
-      const response = await axios.post("http://localhost:3001/api/converse", {
-        message,
-      });
-
-      const therapistMessage = { text: response.data.result, isUser: false };
-      setChatMessages((prevMessages) => [...prevMessages, therapistMessage]);
+      // Mock API call for demo
+      await new Promise((resolve) => setTimeout(resolve, 1000))
+      const therapistMessage = { text: "I understand. How does that make you feel?", isUser: false }
+      setChatMessages((prevMessages) => [...prevMessages, therapistMessage])
     } catch (error) {
-      console.error("Error sending message:", error);
+      console.error("Error sending message:", error)
     }
 
-    setLoading(false); // Reset loading state
-    setMessage("");
-  };
+    setLoading(false)
+    setMessage("")
+  }
 
   const handleKeyDown = (e) => {
     if (e.key === "Enter") {
-      e.preventDefault();
-      sendMessage();
+      e.preventDefault()
+      sendMessage()
     }
-  };
+  }
 
   useEffect(() => {
     if (chatContainerRef.current) {
-      chatContainerRef.current.scrollTop =
-        chatContainerRef.current.scrollHeight;
+      chatContainerRef.current.scrollTo({
+        top: chatContainerRef.current.scrollHeight,
+        behavior: "smooth",
+      })
     }
-  }, [chatMessages]);
+  }, [chatMessages])
 
   useEffect(() => {
-    // Focus on input field when component mounts or chatMessages update
     if (inputRef.current) {
-      inputRef.current.focus();
+      inputRef.current.focus()
     }
-  }, [chatMessages]);
+  }, [chatMessages])
 
   return (
-    <div className="flex flex-col h-screen bg-gradient-to-r from-purple-200 via-pink-300 to-red-200 items-center relative overflow-hidden">
-      {/* Header with Logo and Account Menu */}
-      {/* {circles.map((circle, index) => (
-        <div
-          key={index}
-          className="absolute rounded-full bg-sun-overdose opacity-50"
-          style={{
-            width: circle.size,
-            height: circle.size,
-            top: `${circle.top}%`,
-            left: `${circle.left}%`,
-            // backgroundColor: circle.color,
-            transform: "translate(-50%, -50%)",
-          }}
-        ></div>
-      ))} */}
+    <main className="flex-1 flex flex-col min-h-screen bg-gradient-to-br from-purple-50 via-white to-blue-50 relative">
+      <div ref={sparkleBurstRef} className="fixed inset-0 pointer-events-none z-20"></div>
 
-      {shapes.map((shape, index) => (
-        <div
-          key={index}
-          className="absolute opacity-50"
-          style={{
-            width: shape.width,
-            height: shape.height,
-            top: `${shape.top}%`,
-            left: `${shape.left}%`,
-            background: shape.background,
-            transform: "translate(-50%, -50%)",
-          }}
-        ></div>
-      ))}
-
-      <header className="flex items-center justify-between w-full p-2 shadow-md">
-        {/* Logo */}
-        <div className="flex items-center pl-8">
-          <img src={Logo} alt="My-Nakama Logo" className="h-12 mr-2" />
-          <h1 className="text-2xl font-playfair font-bold text-gray-800">
-            My Nakama
-          </h1>
-        </div>
-        {/* My Account Menu */}
-        <div className="flex items-center space-x-8 pr-16">
-          <nav className="flex items-center space-x-8">
-            <Link
-              to="/journal"
-              className="nav-link text-lg font-lora text-gray-600 hover:text-gray-800"
-            >
-              Journal
-            </Link>
-            <Link
-              to="/blogs"
-              className="nav-link text-lg font-lora text-gray-600 hover:text-gray-800"
-            >
-              Blogs
-            </Link>
-          </nav>
-          <MyAccount />
-        </div>
-      </header>
-
-      {/* <div className="flex w-full flex justify-center">
-        <div className="object-cover top-0 w-64 h-32 bg-blue-600 rounded-b-full"></div>
-      </div> */}
-      
-      {/* Listener Image */}
-      <div className="flex justify-center">
-         <img src={ListenerImg} alt="Listener" className="object-cover w-1/4" /> 
-         {/* <h1 className="object-cover font-playfair italic text-3xl mt-9">Hey, You're heard!!</h1> */}
-        {/* <div className="absolute top-0 bg-radial-bluered left-1/2 transform -translate-x-1/2 w-64 h-32 bg-blue-600 rounded-b-full"></div> */}
-      </div>
-
-      {/* Chat Window */}
-      <div className="w-full max-w-md flex flex-col overflow-hidden mb-20">
-        <div
-          ref={chatContainerRef}
-          className="flex-1 overflow-y-auto p-4 scrollbar-hide"
-          style={{ maxHeight: "calc(100vh - 240px)" }}
-        >
-          {/* Chat Messages */}
-          {chatMessages.map((message, index) => (
-            <div
-              key={index}
-              className={`chat ${
-                message.isUser ? "chat-end" : "chat-start"
-              } mb-4`}
-            >
-              <div
-                className={`chat-bubble ${
-                  message.isUser
-                    ? "bg-blue-500 text-white"
-                    : "bg-gray-100 text-gray-800"
-                }`}
-              >
-                {message.text}
+      <div className="flex-1 flex flex-col relative z-30 px-3 py-4">
+        {chatMessages.length === 0 && showContent && (
+          <div className="flex-1 flex flex-col items-center justify-center max-w-3xl mx-auto w-full">
+            <div className="text-center mb-8">
+              <div className="mb-6">
+                <img
+                  src={ListenerImg || "/placeholder.svg"}
+                  alt="Listener"
+                  className="w-20 h-20 mx-auto rounded-full shadow-xl transition-transform duration-500 hover:scale-110"
+                />
               </div>
+              <h1 className="text-3xl font-semibold text-slate-800 mb-4">
+                Hey, You're heard! ✨
+              </h1>
+              <p className="text-lg text-slate-600 font-light max-w-xl mx-auto">
+                How can I help you today?
+              </p>
             </div>
-          ))}
-          {/* Loading Indicator */}
-          {loading && (
-            <div className="flex justify-center items-center">
-              <div className="loading loading-ring loading-xs bg-blue-500"></div>
-              <div className="loading loading-ring loading-sm bg-blue-500"></div>
-              <div className="loading loading-ring loading-md bg-blue-500"></div>
+          </div>
+        )}
+
+        {chatMessages.length > 0 && (
+          <div className="flex-1 flex flex-col max-w-2xl mx-auto w-full">
+            <div
+              ref={chatContainerRef}
+              className="flex-1 overflow-y-auto scrollbar-hide space-y-3 py-4"
+              style={{ maxHeight: "calc(100vh - 140px)" }}
+            >
+              {chatMessages.map((msg, index) => (
+                <div key={index} className={`flex ${msg.isUser ? "justify-end" : "justify-start"}`}>
+                  <div
+                    className={`max-w-xs px-3 py-2 rounded-xl ${
+                      msg.isUser
+                        ? "bg-gradient-to-r from-purple-500 to-blue-500 text-white"
+                        : "bg-white/90 text-slate-800 border border-white/50"
+                    } text-sm shadow-md`}
+                  >
+                    {msg.text}
+                  </div>
+                </div>
+              ))}
+              {loading && (
+                <div className="flex justify-start">
+                  <div className="bg-white/90 px-3 py-2 rounded-xl shadow-md border border-white/50">
+                    <div className="flex space-x-1">
+                      <div className="w-2 h-2 bg-purple-400 rounded-full animate-pulse"></div>
+                      <div className="w-2 h-2 bg-purple-400 rounded-full animate-pulse delay-200"></div>
+                      <div className="w-2 h-2 bg-purple-400 rounded-full animate-pulse delay-400"></div>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
-          )}
-        </div>
+          </div>
+        )}
       </div>
 
-      {/* Chat Input */}
-      <div className="w-full fixed bottom-0">
-        <div className="max-w-md mx-auto p-4 flex justify-center">
-          <div className="flex relative w-full">
+      <div className="relative z-40 p-3 bg-gradient-to-t from-white/60 to-transparent backdrop-blur-sm">
+        <div className="max-w-2xl mx-auto">
+          <div className="rounded-xl flex items-center px-4 py-2 shadow-lg bg-white border border-gray-200">
             <input
               ref={inputRef}
               type="text"
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               onKeyDown={handleKeyDown}
-              className="flex-1 px-4 py-3 bg-white placeholder-gray-500 text-gray-900 focus:outline-none border border-gray-300 rounded-l-full rounded-r-none"
-              placeholder="Type your message here..."
+              className="flex-1 text-sm text-slate-800 placeholder-slate-400 bg-transparent border-none outline-none"
+              placeholder="Type your message..."
             />
             <button
-              className="bg-blue-500 text-white px-4 py-3 flex items-center border border-gray-300 rounded-l-none rounded-r-full"
               onClick={sendMessage}
+              className="ml-3 px-3 py-2 rounded-lg flex items-center text-white bg-gradient-to-r from-purple-500 to-blue-500 hover:scale-105"
             >
-              <SendIcon className="w-4 h-4 mr-2" />
+              <Send className="w-4 h-4 mr-1" />
               Send
             </button>
           </div>
         </div>
       </div>
-      {/* <div aria-hidden="true" className="absolute left-1/2 top-0 -z-10 -translate-x-1/2 blur-3xl xl:-top-6">
-        <div
-          style={{
-            clipPath:
-              'polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)',
-          }}
-          className="aspect-[1155/678] w-[72.1875rem] bg-gradient-to-tr from-[#f2e03f] to-[ #e24125] opacity-200"
-        />
-      </div> */}
-    </div>
-  );
-};
+    </main>
+  )
+}
 
-export default ChatInterface;
+// Main App component
+export default function App() {
+  return (
+    <div className="min-h-screen w-full bg-gradient-to-br from-purple-50 via-white to-blue-50">
+      <div className="flex min-h-screen">
+        <AppSidebar />
+        <div className="flex-1 ml-16 flex flex-col">
+          <ChatInterface />
+        </div>
+      </div>
+    </div>
+  )
+}

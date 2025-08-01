@@ -1,336 +1,329 @@
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import LoginImg from "../images/LoginImg.png";
-import Logo from "../images/My-Nakama-Logo.png";
-import axios from "axios";
-// import SignupSuccess from "./SignupSuccess";
+import { ArrowLeft, User, Mail, Lock } from "lucide-react";
 
 const SignupForm = () => {
-  const navigate = useNavigate();
-
+  const [currentStep, setCurrentStep] = useState(0);
+  
   const [formData, setFormData] = useState({
-    username: "",
+    name: "",
     email: "",
     password: "",
-    confirmPassword: "",
-    age: "",
-    gender: "",
-    location: "",
-    concerns: "",
-    treatmentHistory: "",
-    emergencyContact: "",
+    answers: {}
   });
 
-  const handleChange = (e) => {
+  const questions = [
+    {
+      question: "What's your favorite genre of music?",
+      options: ["Pop", "Rock", "Indie", "Lofi"]
+    },
+    {
+      question: "Which season do you vibe with most?",
+      options: ["Spring", "Summer", "Autumn", "Winter"]
+    },
+    {
+      question: "Pick a movie night mood:",
+      options: ["Comedy", "Romance", "Thriller", "Documentary"]
+    },
+    {
+      question: "What's your go-to comfort activity?",
+      options: ["Reading", "Cooking", "Gaming", "Walking"]
+    },
+    {
+      question: "Choose a dream vacation type:",
+      options: ["Beach Resort", "Mountain Cabin", "City Adventure", "Cultural Tour"]
+    },
+    {
+      question: "Which pet do you feel spiritually connected to?",
+      options: ["Cat", "Dog", "Bird", "Fish"]
+    },
+    {
+      question: "Pick a time of day you love most:",
+      options: ["Early Morning", "Afternoon", "Evening", "Late Night"]
+    },
+    {
+      question: "What's your current life theme?",
+      options: ["Growth", "Adventure", "Peace", "Creativity"]
+    },
+    {
+      question: "Your favorite way to express yourself:",
+      options: ["Art", "Writing", "Music", "Fashion"]
+    },
+    {
+      question: "What inspires you daily?",
+      options: ["Nature", "People", "Stories", "Dreams"]
+    }
+  ];
+
+  const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleLogin = () => {
-    navigate("/login");
+  const handleAnswerSelect = (questionIndex, answer) => {
+    setFormData({
+      ...formData,
+      answers: { ...formData.answers, [questionIndex]: answer }
+    });
   };
 
-  const handleClick = () => {
-    navigate("/");
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (formData.password !== formData.confirmPassword) {
-      alert("Passwords do not match");
-      return;
-    }
-
-    try {
-      await axios.post("http://localhost:3001/api/signup", {
-        formData,
-      });
-      navigate("/signupsuccess");
-      // alert("Sign up successful. Check your mail for confirmation link");
-      // navigate("/login");
-      // Handle successful sign up (e.g., redirect to login page)
-    } catch (error) {
-      if (error.response) {
-        // The request was made and the server responded with a status code
-        console.log(error.response.data);
-        console.log(error.response.status);
-        console.log(error.response.headers);
-      } else if (error.request) {
-        // The request was made but no response was received
-        console.log(error.request);
-      } else {
-        // Something happened in setting up the request that triggered an Error
-        console.log("Error", error.message);
+  const handleNext = () => {
+    if (currentStep === 0) {
+      if (!formData.name || !formData.email || !formData.password) {
+        alert("Please fill in all fields");
+        return;
       }
-      console.error("Error signing up:", error);
+    }
+    setCurrentStep(currentStep + 1);
+  };
+
+  const handleBack = () => {
+    setCurrentStep(currentStep - 1);
+  };
+
+  const handleSkip = () => {
+    if (currentStep < 10) {
+      setCurrentStep(currentStep + 1);
+    }
+  };
+
+  const handleSubmit = async () => {
+    try {
+      // Replace with your actual API endpoint
+      // await axios.post("http://localhost:3001/api/signup", { formData });
+      console.log("Submitting:", formData);
+      alert("Sign up successful! 🎉 Redirecting to chat...");
+      // In your actual app, navigate to chat page like login does
+      // navigate("/chat");
+      console.log("Navigate to /chat");
+    } catch (error) {
       alert("Sign up failed. Please try again.");
     }
   };
 
+  const progressPercentage = currentStep > 0 ? ((currentStep - 1) / 9) * 100 : 0;
+
   return (
-    <div className="h-screen bg-citrine-white overflow-hidden">
-      <header className="flex items-center justify-between w-full p-4 bg-citrine-white shadow-md">
-        <div className="flex items-center pl-8">
-          <img
-            src={Logo}
-            alt="Logo"
-            className="h-12 mr-2"
-            onClick={handleClick}
-          />
-          <h1 className="text-2xl font-playfair font-bold text-gray-800">
-            My Nakama
-          </h1>
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-purple-100 relative overflow-hidden">
+      {/* Background Pattern */}
+      <div className="absolute inset-0 opacity-30">
+        <svg className="w-full h-full" viewBox="0 0 1200 800" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <pattern id="grid" width="60" height="60" patternUnits="userSpaceOnUse">
+              <path d="M 60 0 L 0 60 M 30 0 L 90 60 M 0 30 L 60 90" stroke="#e2d5f7" strokeWidth="1" />
+            </pattern>
+          </defs>
+          <rect width="100%" height="100%" fill="url(#grid)" />
+          <path d="M0,200 Q300,150 600,200 T1200,200" stroke="#d8c4f0" strokeWidth="2" fill="none" />
+          <path d="M0,400 Q400,350 800,400 T1200,400" stroke="#e8dcf7" strokeWidth="1.5" fill="none" />
+          <path d="M200,0 Q250,200 300,400 T400,800" stroke="#e2d5f7" strokeWidth="1" fill="none" />
+          <path d="M800,0 Q850,200 900,400 T1000,800" stroke="#d8c4f0" strokeWidth="1.5" fill="none" />
+        </svg>
+      </div>
+
+      {/* Header */}
+      <header className="flex items-center justify-between w-full p-4 shadow-md bg-transparent z-10">
+        <div className="flex items-center pl-8 cursor-pointer" onClick={() => console.log("Navigate to home")}>
+          <div className="w-7 h-7 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center mr-3 shadow-lg">
+            <div className="w-3 h-3 bg-white rounded-sm transform rotate-45" />
+          </div>
+          <h1 className="text-lg font-bold text-slate-800 tracking-wide">my nakama</h1>
         </div>
-        <nav className="flex items-center space-x-8 pr-16">
-          <Link to="/login" className="nav-link text-lg font-lora text-gray-800 hover:text-gray-900">Login</Link>
-          <Link
-            to="/blogs"
-            className="nav-link text-lg font-lora text-gray-600 hover:text-gray-800"
+        <nav className="flex items-center space-x-6 pr-12">
+          <button 
+            onClick={() => console.log("Navigate to login")}
+            className="text-base font-medium text-slate-800 hover:text-slate-900"
+          >
+            Login
+          </button>
+          <button 
+            onClick={() => console.log("Navigate to blogs")}
+            className="text-base font-medium text-slate-600 hover:text-slate-800"
           >
             Blogs
-          </Link>
+          </button>
         </nav>
       </header>
-      <div className="flex h-screen bg-citrine-white">
-        <div className="w-1/2 flex items-center justify-center p-8">
-          <div className="max-w-md w-full p-4 overflow-y-scroll h-3/4 scrollbar-hide">
-            <h1 className="text-5xl font-playfair italic text-espresso mb-6">
-              Sign Up
-            </h1>
-            <p className="font-libre-baskerville mb-6">
-              Join us, it's quick and easy
-            </p>
-            <form onSubmit={handleSubmit}>
-              <div className="mb-4">
-                <label
-                  htmlFor="username"
-                  className="block text-espresso font-lora font-bold mb-2"
-                >
-                  Username
-                </label>
-                <input
-                  type="text"
-                  id="username"
-                  placeholder="Username"
-                  name="username"
-                  value={formData.username}
-                  onChange={handleChange}
-                  className="w-full px-4 py-2 border-b-2 bg-citrine-white border-gray-300 focus:outline-none focus:border-blue-500"
-                  required
-                />
-              </div>
-              <div className="mb-4">
-                <label
-                  htmlFor="email"
-                  className="block text-espresso font-lora font-bold mb-2"
-                >
-                  Email
-                </label>
-                <input
-                  type="email"
-                  id="email"
-                  placeholder="Email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  className="w-full px-4 py-2 border-b-2 bg-citrine-white border-gray-300 focus:outline-none focus:border-blue-500"
-                  required
-                />
-              </div>
-              <div className="mb-4">
-                <label
-                  htmlFor="password"
-                  className="block text-espresso font-lora font-bold mb-2"
-                >
-                  Password
-                </label>
-                <input
-                  type="password"
-                  id="password"
-                  placeholder="Password"
-                  name="password"
-                  value={formData.password}
-                  onChange={handleChange}
-                  className="w-full px-4 py-2 border-b-2 bg-citrine-white border-gray-300 focus:outline-none focus:border-blue-500"
-                  required
-                />
-              </div>
-              <div className="mb-4">
-                <label
-                  htmlFor="confirm-password"
-                  className="block text-espresso font-lora font-bold mb-2"
-                >
-                  Confirm Password
-                </label>
-                <input
-                  type="password"
-                  id="confirm-password"
-                  placeholder="Confirm Password"
-                  name="confirmPassword"
-                  value={formData.confirmPassword}
-                  onChange={handleChange}
-                  className="w-full px-4 py-2 border-b-2 bg-citrine-white border-gray-300 focus:outline-none focus:border-blue-500"
-                  required
-                />
-              </div>
-              <div className="mb-4">
-                <label
-                  htmlFor="age"
-                  className="block text-espresso font-lora font-bold mb-2"
-                >
-                  Age
-                </label>
-                <input
-                  type="text"
-                  id="age"
-                  placeholder="Age"
-                  name="age"
-                  value={formData.age}
-                  onChange={handleChange}
-                  className="w-full px-4 py-2 border-b-2 bg-citrine-white border-gray-300 focus:outline-none focus:border-blue-500"
-                  required
-                />
-              </div>
-              <div className="mb-4">
-                <label className="block text-espresso font-lora font-bold mb-2">
-                  Gender
-                </label>
-                <div className="flex items-center">
+
+      {/* Main Content */}
+      <div className="relative z-10 flex flex-col items-center justify-center min-h-[calc(100vh-120px)] px-8 py-12">
+        
+        {/* Progress Bar - Only show for steps 1-10 */}
+        {currentStep > 0 && (
+          <div className="w-full max-w-lg mb-8">
+            <div className="flex justify-between text-sm text-purple-600 mb-2 font-medium">
+              <span>Getting to know you 😊</span>
+              <span>{currentStep}/10</span>
+            </div>
+            <div className="w-full bg-purple-100 rounded-full h-2">
+              <div 
+                className="bg-gradient-to-r from-blue-500 to-purple-600 h-2 rounded-full transition-all duration-500 ease-out"
+                style={{ width: `${progressPercentage}%` }}
+              ></div>
+            </div>
+          </div>
+        )}
+
+        {/* Step 0 - Initial Form */}
+        {currentStep === 0 && (
+          <div className="relative">
+            {/* Flowing Animated Border */}
+            <div className="absolute inset-0 rounded-3xl p-1 bg-gradient-to-r from-blue-500 via-purple-600 to-blue-500 animate-pulse">
+              <div className="absolute inset-0 rounded-3xl bg-gradient-to-r from-blue-500 via-purple-600 to-blue-500 opacity-75"></div>
+            </div>
+            
+            <div className="relative bg-white rounded-3xl p-8 max-w-lg w-full shadow-xl">
+              <h1 className="text-4xl font-extrabold text-slate-800 mb-2 text-center">
+                Welcome!
+              </h1>
+              <p className="text-center text-slate-600 mb-8 font-medium">
+                Let's create your safe space
+              </p>
+              
+              <div className="space-y-6">
+                <div className="relative">
+                  <User className="absolute left-3 top-3 h-5 w-5 text-blue-500" />
                   <input
-                    type="radio"
-                    id="male"
-                    name="gender"
-                    value="male"
-                    checked={formData.gender === "male"}
-                    onChange={handleChange}
-                    className="mr-2"
+                    type="text"
+                    name="name"
+                    placeholder="Your Name"
+                    value={formData.name}
+                    onChange={handleInputChange}
+                    className="w-full pl-12 pr-4 py-3 rounded-lg border border-gray-300 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all font-medium"
                     required
                   />
-                  <label htmlFor="male" className="mr-4">
-                    Male
-                  </label>
+                </div>
+                
+                <div className="relative">
+                  <Mail className="absolute left-3 top-3 h-5 w-5 text-blue-500" />
                   <input
-                    type="radio"
-                    id="female"
-                    name="gender"
-                    value="female"
-                    checked={formData.gender === "female"}
-                    onChange={handleChange}
-                    className="mr-2"
+                    type="email"
+                    name="email"
+                    placeholder="Email Address"
+                    value={formData.email}
+                    onChange={handleInputChange}
+                    className="w-full pl-12 pr-4 py-3 rounded-lg border border-gray-300 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all font-medium"
                     required
                   />
-                  <label htmlFor="female" className="mr-4">
-                    Female
-                  </label>
+                </div>
+                
+                <div className="relative">
+                  <Lock className="absolute left-3 top-3 h-5 w-5 text-blue-500" />
                   <input
-                    type="radio"
-                    id="other"
-                    name="gender"
-                    value="other"
-                    checked={formData.gender === "other"}
-                    onChange={handleChange}
-                    className="mr-2"
+                    type="password"
+                    name="password"
+                    placeholder="Password"
+                    value={formData.password}
+                    onChange={handleInputChange}
+                    className="w-full pl-12 pr-4 py-3 rounded-lg border border-gray-300 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all font-medium"
                     required
                   />
-                  <label htmlFor="other">Other</label>
                 </div>
               </div>
-              <div className="mb-4">
-                <label
-                  htmlFor="location"
-                  className="block text-espresso font-lora font-bold mb-2"
-                >
-                  Location
-                </label>
-                <input
-                  type="text"
-                  id="location"
-                  placeholder="Location (Country/City)"
-                  name="location"
-                  value={formData.location}
-                  onChange={handleChange}
-                  className="w-full px-4 py-2 border-b-2 bg-citrine-white border-gray-300 focus:outline-none focus:border-blue-500"
-                  required
-                />
-              </div>
-              <div className="mb-4">
-                <label
-                  htmlFor="concerns"
-                  className="block text-espresso font-lora font-bold mb-2"
-                >
-                  Mental Health Concerns
-                </label>
-                <textarea
-                  id="concerns"
-                  placeholder="Specify 'none' if there's not any"
-                  name="concerns"
-                  value={formData.concerns}
-                  onChange={handleChange}
-                  className="w-full px-4 py-2 border-2 bg-citrine-white border-gray-300 focus:outline-none focus:border-blue-500"
-                  required
-                ></textarea>
-              </div>
-              <div className="mb-4">
-                <label
-                  htmlFor="treatment-history"
-                  className="block text-espresso font-lora font-bold mb-2"
-                >
-                  Treatment History
-                </label>
-                <textarea
-                  id="treatment-history"
-                  placeholder="Specify 'none' if there's not any"
-                  name="treatmentHistory"
-                  value={formData.treatmentHistory}
-                  onChange={handleChange}
-                  className="w-full px-4 py-2 border-2 bg-citrine-white border-gray-300 focus:outline-none focus:border-blue-500"
-                  required
-                ></textarea>
-              </div>
-              <div className="mb-6">
-                <label
-                  htmlFor="emergency-contact"
-                  className="block text-espresso font-lora font-bold mb-2"
-                >
-                  Emergency Contact
-                </label>
-                <input
-                  type="email"
-                  id="emergency-contact"
-                  placeholder="Emergency Contact (email)"
-                  name="emergencyContact"
-                  value={formData.emergencyContact}
-                  onChange={handleChange}
-                  className="w-full px-4 py-2 border-b-2 bg-citrine-white border-gray-300 focus:outline-none focus:border-blue-500"
-                  required
-                />
-              </div>
+
               <button
-                type="submit"
-                className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                onClick={handleNext}
+                className="w-full mt-8 bg-black text-white py-3 rounded-lg hover:bg-gray-800 transition-all duration-200 font-medium text-lg"
               >
-                Submit
+                Next ✨
               </button>
-            </form>
-            <p className="mt-4 text-center text-espresso">
-              Already have an account?{" "}
-              <button
-                onClick={handleLogin}
-                className="text-blue-500 hover:underline"
-              >
-                Login
-              </button>
-            </p>
+              
+              <p className="text-center text-slate-600 mt-4 font-medium">
+                Already have an account?{' '}
+                <button
+                  onClick={() => console.log("Navigate to login")}
+                  className="text-slate-800 hover:text-slate-900 font-medium underline"
+                >
+                  Login
+                </button>
+              </p>
+            </div>
           </div>
-        </div>
-        <div className="w-1/2 flex items-center justify-center p-8">
-            <img
-              src={LoginImg}
-              alt="Login illustration"
-              className="w-full max-w-md"
-            />
+        )}
+
+        {/* Steps 1-10 - Questions */}
+        {currentStep > 0 && currentStep <= 10 && (
+          <div className="relative w-full max-w-lg">
+            {/* Animated Glowing Border */}
+            <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-600 rounded-3xl opacity-75">
+              <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-600 rounded-3xl animate-pulse"></div>
+            </div>
+            <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-600 rounded-3xl blur-lg opacity-30 animate-pulse"></div>
+            
+            <div className="relative bg-white/80 backdrop-blur-md shadow-2xl rounded-3xl p-8 border border-white/50">
+              {/* Top Navigation */}
+              <div className="flex justify-between items-center mb-6">
+                <button
+                  onClick={handleBack}
+                  className="p-2 rounded-full bg-slate-100 hover:bg-slate-200 transition-all duration-200 hover:scale-110"
+                >
+                  <ArrowLeft className="h-5 w-5 text-slate-600" />
+                </button>
+                
+                <button
+                  onClick={handleSkip}
+                  className="text-slate-600 hover:text-slate-800 font-medium transition-colors"
+                >
+                  Skip
+                </button>
+              </div>
+
+              {/* Question */}
+              <div className="text-center mb-8">
+                <h2 className="text-2xl font-extrabold text-slate-800 mb-4">
+                  {questions[currentStep - 1]?.question}
+                </h2>
+              </div>
+
+              {/* Options */}
+              <div className="space-y-3 mb-8">
+                {questions[currentStep - 1]?.options.map((option, index) => (
+                  <button
+                    key={index}
+                    onClick={() => {
+                      handleAnswerSelect(currentStep - 1, option);
+                      setTimeout(() => {
+                        if (currentStep === 10) {
+                          handleSubmit();
+                        } else {
+                          setCurrentStep(currentStep + 1);
+                        }
+                      }, 200);
+                    }}
+                    className={`w-full p-4 rounded-lg border-2 transition-all duration-200 text-left font-medium hover:scale-105 hover:shadow-lg ${
+                      formData.answers[currentStep - 1] === option
+                        ? 'border-blue-500 bg-blue-50 text-blue-700'
+                        : 'border-gray-300 bg-white/80 text-slate-700 hover:border-blue-400 hover:bg-blue-50'
+                    }`}
+                  >
+                    {option}
+                  </button>
+                ))}
+              </div>
+
+              {/* Submit Button for Last Step */}
+              {currentStep === 10 && (
+                <button
+                  onClick={handleSubmit}
+                  className="w-full bg-black text-white py-3 rounded-lg hover:bg-gray-800 transition-all duration-200 font-medium text-lg"
+                >
+                  Create My Safe Space ✨
+                </button>
+              )}
+            </div>
           </div>
+        )}
       </div>
+
+      <style jsx>{`
+        @keyframes float {
+          0%, 100% { transform: translateY(0px); }
+          50% { transform: translateY(-10px); }
+        }
+        
+        .animate-float {
+          animation: float 3s ease-in-out infinite;
+        }
+      `}</style>
     </div>
   );
 };
