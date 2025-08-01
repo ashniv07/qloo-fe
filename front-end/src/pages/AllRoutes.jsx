@@ -22,6 +22,8 @@ const AllRoutes = () => {
             <Route path='/blogs' element={<Blogs />} />
             <Route path='/therapy' element={<TherapyChatPage/>}/>
                       <Route path='/journal' element={<Journal/>}/>
+                                  <Route path='/profile' element={<ProfilePage/>}/>
+
 
             <Route 
                 path="/chat" 
@@ -31,15 +33,7 @@ const AllRoutes = () => {
                     </ProtectedRoute>
                 } 
             />
-            <Route
-                path="/profile"
-                element={
-                    <ProtectedRoute>
-                        <ProfilePage />
-                    </ProtectedRoute>
-                }
-            />
-           
+          
         </Routes>
     );
 }
