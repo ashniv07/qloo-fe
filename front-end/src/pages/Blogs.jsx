@@ -11,7 +11,7 @@ const Blogs = () => {
   useEffect(() => {
     const fetchContent = async () => {
       try {
-        const response = await axios.get("https://my-nakama-backend.onrender.com/api/blogs");
+        const response = await axios.get("http://localhost:3001/api/blogs");
         setContent(response.data);
       } catch (error) {
         console.error("Error fetching content:", error);

@@ -57,7 +57,7 @@ const ChatInterface = () => {
     setLoading(true); // Set loading state while waiting for response
 
     try {
-      const response = await axios.post("https://my-nakama-backend.onrender.com/api/converse", {
+      const response = await axios.post("http://localhost:3001/api/converse", {
         message,
       });
 

@@ -42,7 +42,7 @@ const SignupForm = () => {
     }
 
     try {
-      await axios.post("https://my-nakama-backend.onrender.com/api/signup", {
+      await axios.post("http://localhost:3001/api/signup", {
         formData,
       });
       navigate("/signupsuccess");

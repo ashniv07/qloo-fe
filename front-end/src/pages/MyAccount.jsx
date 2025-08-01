@@ -31,7 +31,7 @@ const MyAccount = () => {
 
   const handleLogout = async () => {
     try {
-      const response = await axios.post("https://my-nakama-backend.onrender.com/api/logout");
+      const response = await axios.post("http://localhost:3001/api/logout");
 
       if (response.status === 200) {
         console.log("User logged out");

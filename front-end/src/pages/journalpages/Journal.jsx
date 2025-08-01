@@ -24,7 +24,7 @@ const Journal = () => {
   useEffect(() => {
     if (userId) {
       axios
-        .get(`https://my-nakama-backend.onrender.com/api/journals/${userId}`)
+        .get(`http://localhost:3001/api/journals/${userId}`)
         .then((response) => setEntries(response.data))
         .catch((error) => console.error(error));
     }
@@ -58,7 +58,7 @@ const Journal = () => {
         };
         axios
           .put(
-            `https://my-nakama-backend.onrender.com/api/journals/${updatedEntry.id}`,
+            `http://localhost:3001/api/journals/${updatedEntry.id}`,
             updatedEntry
           )
           .then((response) => {
@@ -70,7 +70,7 @@ const Journal = () => {
       } else {
         const newEntry = { userId, title, content: entry };
         axios
-          .post("https://my-nakama-backend.onrender.com/api/journals", newEntry)
+          .post("http://localhost:3001/api/journals", newEntry)
           .then((response) => setEntries([...entries, response.data[0]]))
           .catch((error) => console.error(error));
       }
@@ -83,7 +83,7 @@ const Journal = () => {
   const handleDelete = (index) => {
     const entryToDelete = entries[index];
     axios
-      .delete(`https://my-nakama-backend.onrender.com/api/journals/${entryToDelete.id}`)
+      .delete(`http://localhost:3001/api/journals/${entryToDelete.id}`)
       .then(() => setEntries(entries.filter((_, i) => i !== index)))
       .catch((error) => console.error(error));
   };

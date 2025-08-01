@@ -27,7 +27,7 @@ const ProfilePage = () => {
     const fetchProfile = async () => {
       if (userId) {
         try {
-          const response = await axios.get(`https://my-nakama-backend.onrender.com/api/profile/${userId}`);
+          const response = await axios.get(`http://localhost:3001/api/profile/${userId}`);
           setFormData(response.data);
         } catch (error) {
           console.error("Error fetching profile:", error);
@@ -52,7 +52,7 @@ const ProfilePage = () => {
     e.preventDefault();
 
     try {
-      await axios.put(`https://my-nakama-backend.onrender.com/api/profile/${userId}`, formData);
+      await axios.put(`http://localhost:3001/api/profile/${userId}`, formData);
       alert("Profile updated successfully");
       setIsEditing(false); // Set isEditing to false to disable editing mode
     } catch (error) {

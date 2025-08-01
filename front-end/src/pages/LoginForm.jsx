@@ -4,9 +4,8 @@ import axios from "axios";
 import { useDispatch } from "react-redux";
 import { setUserId } from "../redux/userSlice";
 import LoginImg from "../images/LoginImg.png";
-import Logo from "../images/My-Nakama-Logo.png";
 
-const LoginForm = ({ toggleForm }) => {
+const LoginForm = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
@@ -25,7 +24,7 @@ const LoginForm = ({ toggleForm }) => {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post("https://my-nakama-backend.onrender.com/api/login", {
+      const response = await axios.post("http://localhost:3001/api/login", {
         email,
         password,
       });
@@ -35,7 +34,6 @@ const LoginForm = ({ toggleForm }) => {
       if (userId) {
         dispatch(setUserId(userId));
         setSuccessMessage("Login successful!");
-        console.log("User ID in Journal:", userId);
         setErrorMessage("");
         navigate("/chat");
       } else {
@@ -49,105 +47,92 @@ const LoginForm = ({ toggleForm }) => {
   };
 
   return (
-    <div className="h-screen bg-citrine-white overflow-hidden">
-      <header className="flex items-center justify-between w-full p-4 bg-citrine-white shadow-md">
-        <div className="flex items-center pl-8">
-          <img
-            src={Logo}
-            alt="Logo"
-            className="h-12 mr-2"
-            onClick={handleClick}
-          />
-          <h1 className="text-2xl font-playfair font-bold text-gray-800">
-            My Nakama
-          </h1>
+    <div className="h-screen bg-gradient-to-br from-purple-50 via-white to-purple-100 overflow-hidden">
+      {/* Header */}
+      <header className="flex items-center justify-between w-full p-4 shadow-md bg-transparent z-10">
+        <div className="flex items-center pl-8 cursor-pointer" onClick={handleClick}>
+          <div className="w-7 h-7 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center mr-3 shadow-lg">
+            <div className="w-3 h-3 bg-white rounded-sm transform rotate-45" />
+          </div>
+          <h1 className="text-lg font-bold text-slate-800 tracking-wide">my nakama</h1>
         </div>
-        <nav className="flex items-center space-x-8 pr-16">
-          <Link to="/signup" className="nav-link text-lg font-lora text-gray-800 hover:text-gray-900">Sign Up</Link>
-          <Link
-            to="/blogs"
-            className="nav-link text-lg font-lora text-gray-600 hover:text-gray-800"
-          >
+        <nav className="flex items-center space-x-6 pr-12">
+          <Link to="/signup" className="text-base font-medium text-slate-800 hover:text-slate-900">
+            Sign Up
+          </Link>
+          <Link to="/blogs" className="text-base font-medium text-slate-600 hover:text-slate-800">
             Blogs
           </Link>
         </nav>
       </header>
 
-      <div className="flex h-screen bg-citrine-white">
-        <div className="w-1/2 flex items-center justify-center p-8">
-          <div className="w-full max-w-md bg-citrine-white rounded-lg p-8">
-            <h1 className="text-5xl font-playfair italic text-espresso mb-6">
-              Login
-            </h1>
-            <p className="font-libre-baskerville mb-6">
-              Welcome back, it's good to see you again
-            </p>
+      {/* Main */}
+      <div className="flex h-[calc(100vh-80px)]">
+        {/* Login Form Section */}
+        <div className="w-1/2 flex items-center justify-center p-4">
+          <div className="w-full max-w-sm bg-white rounded-xl shadow-xl p-6">
+            <h1 className="text-4xl font-extrabold text-slate-800 mb-4 font-playfair">Login</h1>
+            <p className="text-slate-600 mb-4 text-base font-medium">Welcome back, it’s good to see you again</p>
+
             <form onSubmit={handleLogin}>
-              <div className="mb-4">
-                <label
-                  htmlFor="email"
-                  className="block text-espresso font-lora font-bold mb-2"
-                >
+              <div className="mb-3">
+                <label htmlFor="email" className="block text-slate-700 font-semibold mb-1 text-sm">
                   Email
                 </label>
                 <input
                   type="email"
                   id="email"
-                  placeholder="Email"
                   name="email"
+                  placeholder="Email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full px-4 py-2 border-b-2 bg-citrine-white border-gray-300 focus:outline-none focus:border-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-400 text-sm"
                 />
               </div>
-              <div className="mb-6">
-                <label
-                  htmlFor="password"
-                  className="block text-espresso font-lora font-bold mb-2"
-                >
+              <div className="mb-5">
+                <label htmlFor="password" className="block text-slate-700 font-semibold mb-1 text-sm">
                   Password
                 </label>
                 <input
                   type="password"
                   id="password"
-                  placeholder="Password"
                   name="password"
+                  placeholder="Password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full px-4 py-2 border-b-2 bg-citrine-white border-gray-300 focus:outline-none focus:border-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-400 text-sm"
                 />
               </div>
               <button
                 type="submit"
-                className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full bg-gradient-to-r from-purple-600 to-blue-600 text-white py-2 rounded-md text-sm hover:from-purple-700 hover:to-blue-700 transition"
               >
                 Login
               </button>
             </form>
+
             {errorMessage && (
-              <p className="mt-4 text-center text-red-500">{errorMessage}</p>
+              <p className="mt-3 text-center text-red-500 text-sm">{errorMessage}</p>
             )}
             {successMessage && (
-              <p className="mt-4 text-center text-green-500">
-                {successMessage}
-              </p>
+              <p className="mt-3 text-center text-green-500 text-sm">{successMessage}</p>
             )}
-            <p className="mt-4 text-center text-espresso">
-              Don't have an account?{" "}
-              <button
-                onClick={handleSignup}
-                className="text-blue-500 hover:underline"
-              >
+
+            <p className="mt-4 text-center text-slate-700 text-sm">
+              Don’t have an account?{" "}
+              <button onClick={handleSignup} className="text-purple-600 hover:underline">
                 Sign Up
               </button>
             </p>
           </div>
         </div>
+
+        {/* Right Image */}
         <div className="w-1/2 flex items-center justify-center p-8">
           <img
             src={LoginImg}
             alt="Login illustration"
-            className="w-full max-w-md"
+            className="w-full max-w-xs"
           />
         </div>
       </div>
